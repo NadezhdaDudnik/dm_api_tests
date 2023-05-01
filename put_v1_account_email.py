@@ -27,3 +27,6 @@ def put_v1_account_email():
         json=payload
     )
     return response
+
+
+response = put_v1_account_email()

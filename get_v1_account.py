@@ -21,3 +21,5 @@ def get_v1_account():
     )
     return response
 
+
+response = get_v1_account()

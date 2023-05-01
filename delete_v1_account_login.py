@@ -20,3 +20,6 @@ def delete_v1_account_login():
         headers=headers
     )
     return response
+
+
+response = delete_v1_account_login()

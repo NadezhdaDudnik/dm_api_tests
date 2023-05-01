@@ -29,3 +29,6 @@ def put_v1_account_password():
         json=payload
     )
     return response
+
+
+response = put_v1_account_password()

@@ -21,3 +21,6 @@ def put_v1_account_token():
         headers=headers
     )
     return response
+
+
+response = put_v1_account_token()

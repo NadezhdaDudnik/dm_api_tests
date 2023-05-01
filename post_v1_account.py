@@ -27,3 +27,19 @@ def post_v1_account():
         json=payload
     )
     return response
+
+
+response = post_v1_account()
+print(response.status_code)
+print(response.request)
+print(response.content)
+print(response.url)
+print(response.cookies)
+print(response.json()['type'])
+print(response.json()['title'])
+
+
+print(response.request.url)
+print(response.request.method)
+print(response.request.headers)
+print(response.request.body)
