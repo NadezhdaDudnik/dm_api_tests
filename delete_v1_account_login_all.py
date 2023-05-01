@@ -1,14 +1,22 @@
 import requests
 
-url = "http://localhost:5051/v1/account/login/all"
 
-payload = {}
-headers = {
-  'X-Dm-Auth-Token': 'IQJh+zgzF5DjJbR86iLOoCJ6RiQBAGOf2xnz7Jgcy8ExyAVKa8GmvgWm5dtmzyFtJqRM1srNY3uEeVpwTryYujIU6qaU2sIYfhtd8UdpN9VZD7pXr/m+GRlWZd5Gqh3v2iGI5HpKph8=',
-  'X-Dm-Bb-Render-Mode': '<string>',
-  'Accept': 'text/plain'
-}
+def delete_v1_account_login_all():
+    """
+    Logout from every device
+    :return:
+    """
+    url = "http://localhost:5051/v1/account/login/all"
 
-response = requests.request("DELETE", url, headers=headers, data=payload)
+    headers = {
+        'X-Dm-Auth-Token': 'IQJh+zgzF5DjJbR86iLOoCJ6RiQBAGOf2xnz7Jgcy8ExyAVKa8GmvgWm5dtmzyFtJqRM1srNY3uEeVpwTryYujIU6qaU2sIYfhtd8UdpN9VZD7pXr/m+GRlWZd5Gqh3v2iGI5HpKph8=',
+        'X-Dm-Bb-Render-Mode': '<string>',
+        'Accept': 'text/plain'
+    }
 
-print(response.text)
+    response = requests.request(
+        method="DELETE",
+        url=url,
+        headers=headers
+    )
+    return response
