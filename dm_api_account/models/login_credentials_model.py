@@ -1,5 +1,8 @@
-login_credentials_model = {
-    "login": "login10",
-    "password": "login_55",
-    "rememberMe": True
-}
+
+from pydantic import BaseModel, StrictStr, StrictBool, Field
+
+
+class LoginCredentialsModel(BaseModel):
+    login: StrictStr
+    password: StrictStr
+    rememberMe: StrictBool

@@ -24,7 +24,7 @@ class MailhogApi:
 
         return response
 
-    def get_token_from_last_email(self) -> str:
+    def get_token_from_last_email(self, token_type) -> str:
         """
         Get user activation token from last email
         :return:
@@ -36,7 +36,7 @@ class MailhogApi:
 
     def get_token_from_last_email_reset(self) -> str:
         """
-        Get user activation token from last email
+        Get user reset email
         :return:
         """
         emails = self.get_api_v2_messages(limit=1).json()
