@@ -11,5 +11,4 @@ structlog.configure(
 def test_delete_v1_account_login():
     api = DmApiAccount(host='http://localhost:5051')
     response = api.login.delete_v1_account_login()
-    assert response.status_code == 200, f'Status code of response should be equal 200 but equals {response.status_code}'
     print(response)

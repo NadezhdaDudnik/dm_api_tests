@@ -1,10 +1,7 @@
-from ..models.login_credentials_model import LoginCredentialsModel
-from requests import session, Response
+from ..models import *
+from requests import Response
 from restclient.restclient import Restclient
-from dm_api_account.models.user_envelope_model import UserEnvelopeModel
-from dm_api_account.models.login_credentials_model import LoginCredentialsModel
-from dm_api_account.models.bad_request_error import BadRequestError
-from dm_api_account.models.general_error import GeneralError
+from ..utilities import validate_request_json, validate_status_code
 
 
 class LoginApi:
@@ -14,7 +11,12 @@ class LoginApi:
         if headers:
             self.client.session.headers.update(headers)
 
-    def post_v1_account_login(self, json: LoginCredentialsModel, **kwargs) -> Response:
+    def post_v1_account_login(
+            self,
+            json: LoginCredentials,
+            status_code: int = 200,
+            **kwargs
+    ) -> Response | UserEnvelope | BadRequestError | GeneralError:
         """
         Authenticate via credentials
         :return:
@@ -22,17 +24,23 @@ class LoginApi:
 
         response = self.client.post(
             path=f"/v1/account/login",
-            json=json.dict(by_alias=True, exclude_none=True),
+            json=validate_request_json(json),
             **kwargs
         )
-        LoginCredentialsModel(**response.json())
-        UserEnvelopeModel(**response.json())
-        BadRequestError(**response.json())
-        GeneralError(**response.json())
-
+        validate_status_code(response, status_code)
+        if response.status_code == 200:
+            return UserEnvelope(**response.json())
+        elif response.status_code == 400:
+            return BadRequestError(**response.json())
+        elif response.status_code == 403:
+            return GeneralError(**response.json())
         return response
 
-    def delete_v1_account_login(self, **kwargs):
+    def delete_v1_account_login(
+            self,
+            status_code: int = 204,
+            **kwargs
+    ) -> Response | GeneralError:
         """
         Logout as current user
         :return:
@@ -42,11 +50,17 @@ class LoginApi:
             path=f"/v1/account/login",
             **kwargs
         )
-        GeneralError(**response.json())
-
+        if response.status_code == 204:
+            validate_status_code(response, status_code)
+        elif response.status_code == 401:
+            return GeneralError(**response.json())
         return response
 
-    def delete_v1_account_login_all(self, **kwargs):
+    def delete_v1_account_login_all(
+            self,
+            status_code: int = 204,
+            **kwargs
+    ) -> Response | GeneralError:
         """
         Logout from every device
         :return:
@@ -56,6 +70,8 @@ class LoginApi:
             path=f"/v1/account/login/all",
             **kwargs
         )
-
-        GeneralError(**response.json())
+        if response.status_code == 204:
+            validate_status_code(response, status_code)
+        elif response.status_code == 401:
+            return GeneralError(**response.json())
         return response

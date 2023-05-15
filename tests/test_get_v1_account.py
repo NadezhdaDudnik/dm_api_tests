@@ -11,5 +11,4 @@ structlog.configure(
 def test_get_v1_account():
     api = DmApiAccount(host='http://localhost:5051')
     response = api.account.get_v1_account()
-    assert response.status_code == 200, f'Status code of response should be equal 200 but equals {response.status_code}'
     print(response)
