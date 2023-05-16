@@ -29,7 +29,7 @@ class LoginApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 200:
-            return UserEnvelope(**response.json())
+            UserEnvelope(**response.json())
         elif response.status_code == 400:
             return BadRequestError(**response.json())
         elif response.status_code == 403:
@@ -50,9 +50,9 @@ class LoginApi:
             path=f"/v1/account/login",
             **kwargs
         )
-        if response.status_code == 204:
-            validate_status_code(response, status_code)
-        elif response.status_code == 401:
+
+        validate_status_code(response, status_code)
+        if response.status_code == 401:
             return GeneralError(**response.json())
         return response
 
@@ -70,8 +70,7 @@ class LoginApi:
             path=f"/v1/account/login/all",
             **kwargs
         )
-        if response.status_code == 204:
-            validate_status_code(response, status_code)
-        elif response.status_code == 401:
+        validate_status_code(response, status_code)
+        if response.status_code == 401:
             return GeneralError(**response.json())
         return response
