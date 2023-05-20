@@ -53,7 +53,7 @@ class AccountApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 201:
-            UserEnvelope(**response.json())
+            return UserEnvelope(**response.json())
         elif response.status_code == 400:
             return BadRequestError(**response.json())
         return response
@@ -77,7 +77,7 @@ class AccountApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 200:
-            UserEnvelope(**response.json())
+            return UserEnvelope(**response.json())
         elif response.status_code == 400:
             return BadRequestError(**response.json())
         return response
@@ -101,7 +101,7 @@ class AccountApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 200:
-            UserEnvelope(**response.json())
+            return UserEnvelope(**response.json())
         elif response.status_code == 400:
             return BadRequestError(**response.json())
         return response
@@ -123,7 +123,7 @@ class AccountApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 200:
-            UserEnvelope(**response.json())
+            return UserEnvelope(**response.json())
         elif response.status_code in [400, 410]:
             return GeneralError(**response.json())
         return response
@@ -144,5 +144,5 @@ class AccountApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 200:
-            UserDetailsEnvelope(**response.json())
+            return UserDetailsEnvelope(**response.json())
         return response
