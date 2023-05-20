@@ -1,4 +1,4 @@
-from services.dm_api_account import DmApiAccount
+from services.dm_api_account import Facade
 import structlog
 
 structlog.configure(
@@ -9,6 +9,13 @@ structlog.configure(
 
 
 def test_get_v1_account():
-    api = DmApiAccount(host='http://localhost:5051')
-    response = api.account.get_v1_account()
-    print(response)
+    api = Facade(host='http://localhost:5051')
+    token = api.login.get_auth_token(login='login26', password='login_55')
+    api.account.set_headers(headers=token)
+    api.login.set_headers(headers=token)
+
+    api.account.get_current_user_info()
+    #api.login_api.delete_v1_account_login()
+    #api.login.logout_user()
+    api.login.logout_user_from_all_devices()
+
