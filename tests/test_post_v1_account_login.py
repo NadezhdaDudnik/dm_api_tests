@@ -11,10 +11,12 @@ structlog.configure(
 
 def test_post_v1_account_login():
     api = Facade(host='http://localhost:5051')
-    json = LoginCredentials(
-         login="login16",
-         password="login_55",
-         rememberMe=True
+    login = "login29"
+    password = "login_55"
+    remember_me = True
+    api.login.login_user(
+         login=login,
+         password=password,
+         remember_me=remember_me
     )
-    response = api.login_api.post_v1_account_login(json=json)
-    print(response)
+

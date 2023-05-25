@@ -17,7 +17,7 @@ def test_post_v1_account_password():
          login="login16",
          email="login16@mail.ru"
     )
-    response = api.account_api.post_v1_account_password(json=json)
+    api.account_api.post_v1_account_password(json=json)
     token = mailhog.get_token_from_last_email_reset()
     response = api.account_api.put_v1_account_token(token=token)
     print(response)

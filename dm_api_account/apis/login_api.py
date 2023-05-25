@@ -16,8 +16,7 @@ class LoginApi:
             json: LoginCredentials,
             status_code: int = 200,
             **kwargs
-    ) -> Response:
-        # | UserEnvelope | BadRequestError | GeneralError
+    ) -> Response | UserEnvelope | BadRequestError | GeneralError:
         """
         Authenticate via credentials
         :return:
@@ -30,10 +29,10 @@ class LoginApi:
         validate_status_code(response, status_code)
         if response.status_code == 200:
             UserEnvelope(**response.json())
-        # elif response.status_code == 400:
-        #  return BadRequestError(**response.json())
-        # elif response.status_code == 403:
-        #    return GeneralError(**response.json())
+        elif response.status_code == 400:
+            return BadRequestError(**response.json())
+        elif response.status_code == 403:
+            return GeneralError(**response.json())
         return response
 
     def delete_v1_account_login(

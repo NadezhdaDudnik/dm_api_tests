@@ -75,6 +75,9 @@ class MailhogApi:
         token = token_url.split('/')[-1]
         return token
 
+    def delete_all_messages(self):
+        response = self.client.delete(path='/api/v1/messages')
+        return response
 
 #if __name__ == '__main__':
    # MailhogApi().get_api_v2_messages(limit=1)
