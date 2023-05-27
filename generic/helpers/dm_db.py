@@ -24,9 +24,9 @@ class DmDatabase:
         dataset = self.db.send_bulk_query(query=query)
         return dataset
 
-    def update_user_activated(self, login):
+    def update_user_activated(self, login, is_activated):
         query = f'''
-        update "public"."Users" set "Activated" = 'true' where "Login" = '{login}'
+        update "public"."Users" set "Activated" = '{is_activated}' where "Login" = '{login}'
         '''
         dataset = self.db.send_bulk_query(query=query)
         return dataset
