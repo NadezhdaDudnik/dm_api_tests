@@ -1,15 +1,7 @@
-from services.dm_api_account import Facade
-import structlog
 
-structlog.configure(
-    processors=[
-        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
-    ]
-)
-
-
-def test_delete_v1_account_login_all():
-    api = Facade(host='http://localhost:5051')
-    response = api.login_api.delete_v1_account_login_all()
-    print(response)
+def test_delete_v1_account_login_all(dm_api_facade):
+    login = "login41"
+    token = dm_api_facade.mailhog.get_token_by_login(login=login)
+    dm_api_facade.login.set_headers(headers=token)
+    dm_api_facade.login.logout_user_from_all_devices()
 

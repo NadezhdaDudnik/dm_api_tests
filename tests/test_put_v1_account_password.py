@@ -1,27 +1,13 @@
-from dm_api_account.models.change_password_model import ChangePassword
-from services.dm_api_account import Facade
-from generic.helpers.mailhog import MailhogApi
-import structlog
+def test_put_v1_account_password(dm_api_facade):
+    login = "login41"
+    #token=
+    oldPassword = "login_55"
+    newPassword = "login_555"
 
-structlog.configure(
-    processors=[
-        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
-    ]
-)
-
-
-def test_put_v1_account_password():
-    mailhog = MailhogApi(host='http://localhost:5025')
-    api = Facade(host='http://localhost:5051')
-    token = mailhog.get_token_from_last_email()
-    json = ChangePassword(
-         login="login17",
-         token=token,
-         oldPassword="login_55",
-         newPassword="login_555"
+    response = dm_api_facade.account.change_password(
+        login=login,
+        token=token,
+        oldPassword=oldPassword,
+        newPassword=newPassword
     )
-    response = api.account_api.put_v1_account_password(json=json)
-    print(response)
-
-
-
+    return response
