@@ -10,8 +10,8 @@ import random
 
 @pytest.fixture
 def prepare_user(dm_api_facade, dm_orm):
-    user = namedtuple('User', 'login, email, password')
-    User = user(login="login42", email="login42@mail.ru", password="login_55")
+    user = namedtuple('User', 'login, email, password, status_code')
+    User = user(login="login42", email="login42@mail.ru", password="login_55", status_code=201)
     dm_orm.delete_user_by_login(login=User.login)
     dataset = dm_orm.get_user_by_login(login=User.login)
     assert len(dataset) == 0
@@ -23,10 +23,12 @@ def test_post_v1_account(dm_api_facade, dm_orm, prepare_user):
     login = prepare_user.login
     email = prepare_user.email
     password = prepare_user.password
+    status_code = prepare_user.status_code
     dm_api_facade.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=status_code
     )
     dataset = dm_orm.get_user_by_login(login=login)
     row: User
@@ -79,13 +81,15 @@ def random_string(begin=1, end=30):
 @pytest.mark.parametrize('login', [random_string(5, 5) for _ in range(3)])
 @pytest.mark.parametrize('email', [random_string(5, 5) + '@' + random_string(5, 5) + '.ru' for _ in range(3)])
 @pytest.mark.parametrize('password', [random_string(5, 5) for _ in range(3)])
-def test_post_v1_account_2(dm_api_facade, dm_orm, login, email, password):
+@pytest.mark.parametrize('status_code', [400, 400, 400])
+def test_post_v1_account_2(dm_api_facade, dm_orm, login, email, password, status_code):
     dm_orm.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
     dm_api_facade.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=status_code
     )
     dataset = dm_orm.get_user_by_login(login=login)
     row: User
@@ -115,17 +119,17 @@ def test_post_v1_account_2(dm_api_facade, dm_orm, login, email, password):
         assert row.Activated is True, f'User {login} is not activated'
 
     dm_api_facade.login.login_user(login=login, password=password)
-    dm_orm.db.close_connection()
 
 
 @pytest.mark.parametrize('login, email, password, status_code, check_error', [
-                            ('login_51', 'login_51@mail.ru', 'login_55', 201, ''),
-                            ('login_47', 'login_47233@mail.ru', 'login', 400, 'Short'),
-                            ('lo', 'login_47222@mail.ru', 'login_55', 400, 'Taken'),
-                            ('login_47', '@mail.ru', 'login_55', 400, 'Invalid'),
-                            ('login_47', 'login_47mail.ru', 'login_55', 400, 'Invalid'),
-                         ])
-def test_create_and_activated_user_with_random_params(dm_api_facade, dm_orm, login, email, password, status_code, check_error):
+    ('login_51', 'login_51@mail.ru', 'login_55', 201, ''),
+    ('login_47', 'login_47233@mail.ru', 'login', 400, 'Short'),
+    ('lo', 'login_47222@mail.ru', 'login_55', 400, 'Taken'),
+    ('login_47', '@mail.ru', 'login_55', 400, 'Invalid'),
+    ('login_47', 'login_47mail.ru', 'login_55', 400, 'Invalid'),
+])
+def test_create_and_activated_user_with_random_params(dm_api_facade, dm_orm, login, email, password, status_code,
+                                                      check_error):
     dm_orm.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
     response = dm_api_facade.account.register_new_user(
@@ -162,7 +166,6 @@ def test_create_and_activated_user_with_random_params(dm_api_facade, dm_orm, log
             assert row.Activated is True, f'User {login} is not activated'
 
         dm_api_facade.login.login_user(login=login, password=password)
-        dm_orm.db.close_connection()
     elif status_code != 201 and check_error == "Taken":
         print(check_error)
         assert_that(response.json()['errors'], has_entries(
@@ -184,12 +187,6 @@ def test_create_and_activated_user_with_random_params(dm_api_facade, dm_orm, log
                 "Password": [check_error]
             }
         ))
-
-
-
-
-
-
 
     '''db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
     db.delete_user_by_login(login=login)
