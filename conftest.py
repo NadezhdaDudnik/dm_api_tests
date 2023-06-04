@@ -1,6 +1,8 @@
 import pytest
 from vyper import v
 from pathlib import Path
+
+from generic.assertions.post_v1_account import AssertionsPostV1Account
 from generic.helpers.mailhog import MailhogApi
 from generic.helpers.orm_db import OrmDatabase
 from generic.helpers.dm_db import DmDatabase
@@ -51,6 +53,11 @@ def dm_orm():
                       database=v.get('database.dm3_5.database'))
     yield orm
     orm.db.close_connection()
+
+
+@pytest.fixture()
+def assertions(dm_orm):
+    return AssertionsPostV1Account(dm_orm)
 
 
 @pytest.fixture(autouse=True)
