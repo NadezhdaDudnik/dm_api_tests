@@ -3,10 +3,10 @@ import time
 from hamcrest import assert_that, has_entries
 from generic.helpers.orm_db import OrmDatabase
 
+
 class AssertionsPostV1Account:
     def __init__(self, orm_db: OrmDatabase):
         self.orm_db = orm_db
-
 
     def check_user_was_created(self, login):
         dataset = self.orm_db.get_user_by_login(login=login)

@@ -30,7 +30,7 @@ class AccountApi:
         )
         validate_status_code(response, status_code)
         if response.status_code == 400:
-            return BadRequestError(**response.json())
+            BadRequestError(**response.json())
         return response
 
     def post_v1_account_password(

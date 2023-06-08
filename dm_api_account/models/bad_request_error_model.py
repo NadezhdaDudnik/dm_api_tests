@@ -10,18 +10,18 @@ class Errors(BaseModel):
     Email: Optional[List] = Field(None, description='Email')
     Login: Optional[List] = Field(None, description='Login')
     Password: Optional[List] = Field(None, description='Password')
+    login: Optional[List] = Field(None, description='Login')
 
 
 class BadRequestError(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    # message: Optional[StrictStr] = Field(None, description='Client message')
-    # invalid_properties: Optional[Dict[str, List[StrictStr]]] = Field(
-    #  None,
-    #  alias='invalidProperties',
-    #  description='Key-value pairs of invalid request properties',
-    # )
+    '''message: Optional[StrictStr] = Field(None, description='Client message')
+    invalid_properties: Optional[Dict[str, List[StrictStr]]] = Field(
+        None, alias='invalidProperties',
+        description='Key-value pairs of invalid request properties',
+    )'''
 
     type: Optional[StrictStr] = Field(None, description='type')
     title: Optional[StrictStr] = Field(None, description='title')
