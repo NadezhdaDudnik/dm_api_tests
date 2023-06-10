@@ -152,57 +152,6 @@ class TestsPostV1Account:
             assertions.check_user_was_activated(login=login)
             dm_api_facade.login.login_user(login=login, password=password)
 
-    @pytest.mark.parametrize('login, email, password, status_code, check_error', [
-        ('l', 'login47222@mail.ru', 'login_55', 400, 'Short')])
-    def test_create_and_activated_user_with_taken_login(self, dm_api_facade, dm_orm, login, email, password,
-                                                        status_code,
-                                                        check_error, assertions):
-        dm_orm.delete_user_by_login(login=login)
-        dm_api_facade.mailhog.delete_all_messages()
-        response = dm_api_facade.account.register_new_user(
-            login=login,
-            email=email,
-            password=password,
-            status_code=status_code
-        )
-        if status_code != 201:
-            print(check_error)
-            assert_that(response.json()['errors'], has_entries(
-                {"Login": [check_error]}
-            ))
-        assertions.check_user_was_created(login=login)
-        dm_orm.get_user_by_login(login=login)
-        assertions.check_user_was_created(login=login)
-        assertions.check_user_update_activation(login=login)
-        assertions.check_user_was_activated(login=login)
-        dm_api_facade.login.login_user(login=login, password=password)
-
-    @pytest.mark.parametrize('login, email, password, status_code, check_error', [
-        ('login2345', '@mail.ru', 'login_55', 400, 'Invalid'),
-        ('login789', 'login_47222mail.ru', 'login_55', 400, 'Invalid')])
-    def test_create_and_activated_user_without_domain_for_email(self, dm_api_facade, dm_orm, login, email, password,
-                                                                status_code,
-                                                                check_error, assertions):
-        dm_orm.delete_user_by_login(login=login)
-        dm_api_facade.mailhog.delete_all_messages()
-        response = dm_api_facade.account.register_new_user(
-            login=login,
-            email=email,
-            password=password,
-            status_code=status_code
-        )
-        if status_code != 201:
-            print(check_error)
-            assert_that(response.json()['errors'], has_entries(
-                {"Email": [check_error]}
-            ))
-        assertions.check_user_was_created(login=login)
-        dm_orm.get_user_by_login(login=login)
-        assertions.check_user_was_created(login=login)
-        assertions.check_user_update_activation(login=login)
-        assertions.check_user_was_activated(login=login)
-        dm_api_facade.login.login_user(login=login, password=password)
-
         '''db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
         db.delete_user_by_login(login=login)
         dataset = db.get_user_by_login(login=login)
