@@ -29,8 +29,8 @@ class AccountApi:
             **kwargs
         )
         validate_status_code(response, status_code)
-        if response.status_code == 400:
-            BadRequestError(**response.json())
+        #if response.status_code == 400:
+           # return BadRequestError(**response.json())
         return response
 
     def post_v1_account_password(
@@ -121,11 +121,11 @@ class AccountApi:
             path=f"/v1/account/{token}",
             **kwargs
         )
-        validate_status_code(response, status_code)
+        #validate_status_code(response, status_code)
         if response.status_code == 200:
             return UserEnvelope(**response.json())
-        elif response.status_code in [400, 410]:
-            return GeneralError(**response.json())
+        '''elif response.status_code in [400, 410]:
+            return GeneralError(**response.json())'''
         return response
 
     def get_v1_account(

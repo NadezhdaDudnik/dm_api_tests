@@ -26,14 +26,15 @@ class LoginApi:
             path=f"/v1/account/login",
             json=validate_request_json(json)
         )
-        #validate_status_code(response, status_code)
+        validate_status_code(response, status_code)
         if response.status_code == 200:
             UserEnvelope(**response.json())
-        elif response.status_code == 400:
-            BadRequestError(**response.json())
-        elif response.status_code == 403:
-            GeneralError(**response.json())
         return response
+    ''' elif response.status_code == 400:
+         BadRequestError(**response.json())
+     elif response.status_code == 403:
+         GeneralError(**response.json())
+     return response'''
 
     def delete_v1_account_login(
             self,
