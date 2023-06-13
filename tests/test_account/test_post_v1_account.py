@@ -7,6 +7,7 @@ from generic.helpers.orm_models import User
 from collections import namedtuple
 from string import ascii_letters, digits
 import random
+from data.post_v1_account import PostV1AccountData as user_data
 
 
 def random_string(begin=1, end=10):
@@ -16,6 +17,7 @@ def random_string(begin=1, end=10):
         string += random.choice(symbols)
     return string
 
+
 @allure.suite("Тесты на проверку метода POST{host}/v1/account")
 @allure.sub_suite("Позитивные и негативные проверки")
 class TestsPostV1Account:
@@ -24,7 +26,7 @@ class TestsPostV1Account:
     @pytest.fixture
     def prepare_user(self, dm_api_facade, dm_orm):
         user = namedtuple('User', 'login, email, password, status_code')
-        User = user(login="login6000", email="login6000@mail.ru", password="login_55", status_code=201)
+        User = user(login=user_data.login, email=user_data.email, password=user_data.password, status_code=201)
         dm_orm.delete_user_by_login(login=User.login)
         dataset = dm_orm.get_user_by_login(login=User.login)
         assert len(dataset) == 0
@@ -46,7 +48,7 @@ class TestsPostV1Account:
         assertions.check_user_was_created(login=login)
         dm_orm.get_user_by_login(login=login)
         dm_api_facade.account.activate_registered_user(login=login)
-        #assertions.check_user_update_activation(login=login)
+        # assertions.check_user_update_activation(login=login)
         assertions.check_user_was_activated(login=login)
         dm_api_facade.login.login_user(login=login, password=password)
 
@@ -113,7 +115,6 @@ class TestsPostV1Account:
                 assert row.Activated is True, f'User {login} is not activated'
 
             dm_api_facade.login.login_user(login=login, password=password)
-
 
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
         ('login_51', 'login_51@mail.ru', 'login_55', 201, ''),

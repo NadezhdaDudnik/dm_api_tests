@@ -6,7 +6,7 @@ from sqlalchemy import delete
 from sqlalchemy import update
 from generic.helpers.orm_models import User
 
-from orm_client.orm_client import OrmClient
+from common_libs.orm_client.orm_client import OrmClient
 
 
 class OrmDatabase:

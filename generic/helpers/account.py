@@ -1,7 +1,7 @@
-from dm_api_account.models import Registration
-from dm_api_account.models import ResetPassword
-from dm_api_account.models import ChangeEmail
-from dm_api_account.models import ChangePassword
+from apis.dm_api_account.models import Registration
+from apis.dm_api_account.models import ResetPassword
+from apis.dm_api_account.models import ChangeEmail
+from apis.dm_api_account.models import ChangePassword
 
 class Account:
     def __init__(self, facade):
