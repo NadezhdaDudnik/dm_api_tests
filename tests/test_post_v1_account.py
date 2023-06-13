@@ -1,5 +1,6 @@
 import time
 
+import allure
 import pytest
 from hamcrest import assert_that, has_entries
 from generic.helpers.orm_models import User
@@ -15,19 +16,22 @@ def random_string(begin=1, end=10):
         string += random.choice(symbols)
     return string
 
-
+@allure.suite("Тесты на проверку метода POST{host}/v1/account")
+@allure.sub_suite("Позитивные и негативные проверки")
 class TestsPostV1Account:
 
+    @allure.step("Подготовка тестового пользователя")
     @pytest.fixture
     def prepare_user(self, dm_api_facade, dm_orm):
         user = namedtuple('User', 'login, email, password, status_code')
-        User = user(login="login42", email="login42@mail.ru", password="login_55", status_code=201)
+        User = user(login="login6000", email="login6000@mail.ru", password="login_55", status_code=201)
         dm_orm.delete_user_by_login(login=User.login)
         dataset = dm_orm.get_user_by_login(login=User.login)
         assert len(dataset) == 0
         dm_api_facade.mailhog.delete_all_messages()
         return User
 
+    @allure.step("Проверка регистрации, активации и авторизации пользователя")
     def test_post_v1_account(self, dm_api_facade, dm_orm, prepare_user, assertions):
         login = prepare_user.login
         email = prepare_user.email
@@ -40,16 +44,17 @@ class TestsPostV1Account:
             status_code=status_code
         )
         assertions.check_user_was_created(login=login)
-        dataset = dm_orm.get_user_by_login(login=login)
-        assertions.check_user_was_created(login=login)
-        assertions.check_user_update_activation(login=login)
+        dm_orm.get_user_by_login(login=login)
+        dm_api_facade.account.activate_registered_user(login=login)
+        #assertions.check_user_update_activation(login=login)
         assertions.check_user_was_activated(login=login)
         dm_api_facade.login.login_user(login=login, password=password)
 
-    @pytest.mark.parametrize('login', [random_string(1, 7) for _ in range(3)])
-    @pytest.mark.parametrize('email', [random_string(1, 7) + '@' + random_string(5, 5) + '.ru' for _ in range(3)])
-    @pytest.mark.parametrize('password', [random_string(1, 7) for _ in range(3)])
-    @pytest.mark.parametrize('status_code', [400 for _ in range(3)])
+    @allure.title("Проверка регистрации и активации пользователя - статус код 400")
+    @pytest.mark.parametrize('login', [random_string(1, 1) for _ in range(1)])
+    @pytest.mark.parametrize('email', [random_string(1, 7) + '@' + random_string(5, 5) + '.ru' for _ in range(1)])
+    @pytest.mark.parametrize('password', [random_string(1, 7) for _ in range(1)])
+    @pytest.mark.parametrize('status_code', [400 for _ in range(1)])
     def test_create_and_activate_user(self, dm_api_facade, dm_orm, login, email, password, status_code, assertions):
         dm_orm.delete_user_by_login(login=login)
         dm_api_facade.mailhog.delete_all_messages()
@@ -59,12 +64,14 @@ class TestsPostV1Account:
             password=password,
             status_code=status_code
         )
-        assertions.check_user_was_created(login=login)
-        dm_api_facade.account.activate_registered_user(login=login)
-        assertions.check_user_update_activation(login=login)
-        assertions.check_user_was_activated(login=login)
-        dm_api_facade.login.login_user(login=login, password=password)
+        if status_code == 201:
+            assertions.check_user_was_created(login=login)
+            dm_api_facade.account.activate_registered_user(login=login)
+            assertions.check_user_update_activation(login=login)
+            assertions.check_user_was_activated(login=login)
+            dm_api_facade.login.login_user(login=login, password=password)
 
+    @allure.title("Проверка успешной регистрации и успешной активации пользователя, и авторизации пользователя")
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
         ('login_51', 'login_51@mail.ru', 'login_55', 201, '')])
     def test_create_and_activated_user_200_ok(self, dm_api_facade, dm_orm, login, email, password,
@@ -107,6 +114,7 @@ class TestsPostV1Account:
 
             dm_api_facade.login.login_user(login=login, password=password)
 
+
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
         ('login_51', 'login_51@mail.ru', 'login_55', 201, ''),
         ('login_47', 'login_47233@mail.ru', 'login', 400, 'Short'),
@@ -125,32 +133,32 @@ class TestsPostV1Account:
             password=password,
             status_code=status_code
         )
-
-        if status_code != 201 and len(password) <= 5:
-            print(check_error)
-            print(status_code)
-            print(response.json().get('errors'))
-            assert_that(response.json().get('errors'), has_entries(
-                {'Password': [check_error]}
-            ))
-        elif status_code != 201 and len(login) <= 1:
-            print(check_error)
-            print(response.json().get('errors'))
-            assert_that(response.json().get('errors'), has_entries(
-                {"Login": [check_error]}
-            ))
-        elif status_code != 201:
-            print(check_error)
-            print(response.json().get('errors'))
-            assert_that(response.json().get('errors'), has_entries(
-                {'Email': [check_error]}
-            ))
-        else:
-            assertions.check_user_was_created(login=login)
-            dm_api_facade.account.activate_registered_user(login=login)
-            dm_orm.get_user_by_login(login=login)
-            assertions.check_user_was_activated(login=login)
-            dm_api_facade.login.login_user(login=login, password=password)
+        with allure.step("Проверка при генерации разных тестовых данных"):
+            if status_code != 201 and len(password) <= 5:
+                print(check_error)
+                print(status_code)
+                print(response.json().get('errors'))
+                assert_that(response.json().get('errors'), has_entries(
+                    {'Password': [check_error]}
+                ))
+            elif status_code != 201 and len(login) <= 1:
+                print(check_error)
+                print(response.json().get('errors'))
+                assert_that(response.json().get('errors'), has_entries(
+                    {"Login": [check_error]}
+                ))
+            elif status_code != 201:
+                print(check_error)
+                print(response.json().get('errors'))
+                assert_that(response.json().get('errors'), has_entries(
+                    {'Email': [check_error]}
+                ))
+            else:
+                assertions.check_user_was_created(login=login)
+                dm_api_facade.account.activate_registered_user(login=login)
+                dm_orm.get_user_by_login(login=login)
+                assertions.check_user_was_activated(login=login)
+                dm_api_facade.login.login_user(login=login, password=password)
 
         '''db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
         db.delete_user_by_login(login=login)

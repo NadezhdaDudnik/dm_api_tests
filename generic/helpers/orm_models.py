@@ -424,7 +424,8 @@ class RoomClaim(Base):
     __tablename__ = 'RoomClaims'
 
     RoomClaimId = Column(UUID, primary_key=True)
-    ParticipantId = Column(ForeignKey('Readers.ReaderId', ondelete='CASCADE'), ForeignKey('Characters.CharacterId', ondelete='CASCADE'), nullable=False, index=True)
+    ParticipantId = Column(ForeignKey('Readers.ReaderId', ondelete='CASCADE'),
+                           ForeignKey('Characters.CharacterId', ondelete='CASCADE'), nullable=False, index=True)
     RoomId = Column(ForeignKey('Rooms.RoomId', ondelete='CASCADE'), nullable=False, index=True)
     Policy = Column(Integer, nullable=False)
 

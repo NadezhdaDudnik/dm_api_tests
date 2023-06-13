@@ -1,3 +1,4 @@
+import allure
 from requests import Response
 from restclient.restclient import Restclient
 from ..models import *
@@ -16,6 +17,7 @@ class AccountApi:
             json: Registration,
             status_code: int = 201,
             **kwargs
+
     ) -> Response | BadRequestError:
         """
         :param status_code:
@@ -23,14 +25,15 @@ class AccountApi:
         Register new user
         :return:
         """
-        response = self.client.post(
-            path=f"/v1/account",
-            json=validate_request_json(json),
-            **kwargs
-        )
+        with allure.step("Регистрация нового пользователя"):
+            response = self.client.post(
+                path=f"/v1/account",
+                json=validate_request_json(json),
+                **kwargs
+            )
         validate_status_code(response, status_code)
-        #if response.status_code == 400:
-           # return BadRequestError(**response.json())
+        # if response.status_code == 400:
+        # return BadRequestError(**response.json())
         return response
 
     def post_v1_account_password(
@@ -111,21 +114,21 @@ class AccountApi:
             token: str,
             status_code: int = 200,
             **kwargs
-    ) -> Response | UserEnvelope | GeneralError:
+    ) -> Response | UserEnvelope:
         """
         Activate registered user
         :return:
         """
-
-        response = self.client.put(
-            path=f"/v1/account/{token}",
-            **kwargs
-        )
-        #validate_status_code(response, status_code)
+        with allure.step("Активация пользователя"):
+            response = self.client.put(
+                path=f"/v1/account/{token}",
+                **kwargs
+            )
+        validate_status_code(response, status_code)
         if response.status_code == 200:
             return UserEnvelope(**response.json())
-        '''elif response.status_code in [400, 410]:
-            return GeneralError(**response.json())'''
+        # elif response.status_code in [400, 410]:
+        # return GeneralError(**response.json())
         return response
 
     def get_v1_account(

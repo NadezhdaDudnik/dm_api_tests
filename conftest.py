@@ -34,23 +34,28 @@ options = (
     'database.dm3_5.host',
 )
 
+connect = None
+
 
 @pytest.fixture
 def dm_db():
-    db = DmDatabase(
-        user=v.get('database.dm3_5.user'),
-        password=v.get('database.dm3_5.password'),
-        host=v.get('database.dm3_5.host'),
-        database=v.get('database.dm3_5.database'))
-    return db
+    global connect
+    if connect is None:
+        connect = DmDatabase(
+            user=v.get('database.dm3_5.user'),
+            password=v.get('database.dm3_5.password'),
+            host=v.get('database.dm3_5.host'),
+            database=v.get('database.dm3_5.database'))
+    yield connect
+    connect.db.db.close()
 
 
 @pytest.fixture
 def dm_orm():
     orm = OrmDatabase(user=v.get('database.dm3_5.user'),
-                      password=v.get('database.dm3_5.password'),
-                      host=v.get('database.dm3_5.host'),
-                      database=v.get('database.dm3_5.database'))
+                              password=v.get('database.dm3_5.password'),
+                              host=v.get('database.dm3_5.host'),
+                              database=v.get('database.dm3_5.database'))
     yield orm
     orm.db.close_connection()
 
