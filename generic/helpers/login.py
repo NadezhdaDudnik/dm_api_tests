@@ -1,6 +1,6 @@
 import allure
 
-from apis.dm_api_account.models import LoginCredentials
+from dm_api_account.models import LoginCredentials
 
 try:
     from services.dm_api_account import Facade
@@ -9,7 +9,7 @@ except ImportError:
 
 
 class Login:
-    def __init__(self, facade: Facade):
+    def __init__(self, facade):
         self.facade = facade
 
     def set_headers(self, headers):
