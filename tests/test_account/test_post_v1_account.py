@@ -58,7 +58,8 @@ class TestsPostV1Account:
     @pytest.mark.parametrize('password', [random_string(1, 7) for _ in range(1)])
     @pytest.mark.parametrize('status_code', [400 for _ in range(1)])
     @pytest.mark.parametrize('check_error', ["Short" for _ in range(1)])
-    def test_create_and_activate_user(self, dm_api_facade, dm_orm, login, email, password, status_code, check_error, assertions):
+    def test_create_and_activate_user(self, dm_api_facade, dm_orm, login, email, password, status_code, check_error,
+                                      assertions):
         dm_orm.delete_user_by_login(login=login)
         dm_api_facade.mailhog.delete_all_messages()
         response = dm_api_facade.account.register_new_user(
@@ -71,7 +72,6 @@ class TestsPostV1Account:
         assert_that(response.json().get('errors'), has_entries(
             {"Login": [check_error]}
         ))
-
 
     @allure.title("Проверка успешной регистрации и успешной активации пользователя, и авторизации пользователя")
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
@@ -91,7 +91,7 @@ class TestsPostV1Account:
             dataset = dm_orm.get_user_by_login(login=login)
             row: User
             for row in dataset:
-                assert_that(row, has_entries(
+                assert_that(row, has_properties(
                     {
                         'Login': login,
                         'Activated': False
