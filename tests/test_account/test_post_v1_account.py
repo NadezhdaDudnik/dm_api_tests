@@ -75,7 +75,7 @@ class TestsPostV1Account:
 
     @allure.title("Проверка успешной регистрации и успешной активации пользователя, и авторизации пользователя")
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
-        ('login_51', 'login_51@mail.ru', 'login_55', 201, '')])
+        ('login_51', 'login_512@mail.ru', 'login_55', 201, '')])
     def test_create_and_activated_user_200_ok(self, dm_api_facade, dm_orm, login, email, password,
                                               status_code,
                                               check_error):
