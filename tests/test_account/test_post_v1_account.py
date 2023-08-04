@@ -78,43 +78,23 @@ class TestsPostV1Account:
         ('login_51', 'login_512@mail.ru', 'login_55', 201, '')])
     def test_create_and_activated_user_200_ok(self, dm_api_facade, dm_orm, login, email, password,
                                               status_code,
-                                              check_error):
+                                              check_error, assertions):
         dm_orm.delete_user_by_login(login=login)
         dm_api_facade.mailhog.delete_all_messages()
-        dm_api_facade.account.register_new_user(
+        response = dm_api_facade.account.register_new_user(
             login=login,
             email=email,
             password=password,
             status_code=status_code
         )
         if status_code == 201:
-            dataset = dm_orm.get_user_by_login(login=login)
-            row: User
-            for row in dataset:
-                assert_that(row, has_properties(
-                    {
-                        'Login': login,
-                        'Activated': False
-                    }
-                ))
-            dm_orm.update_user_activated(login=login)
-            dataset = dm_orm.get_user_by_login(login=login)
-            for row in dataset:
-                assert row.Activated is True, f'User {login} is not activated'
-
-            time.sleep(2)
-
+            assertions.check_user_was_created(login=login)
             dm_api_facade.account.activate_registered_user(login=login)
-            for row in dataset:
-                assert row.Activated is True, f'User {login} is activated yet'
-
-            dataset = dm_orm.get_user_by_login(login=login)
-            time.sleep(2)
-
-            for row in dataset:
-                assert row.Activated is True, f'User {login} is not activated'
-
+            assertions.check_user_was_activated(login=login)
             dm_api_facade.login.login_user(login=login, password=password)
+        else:
+            error_message = response.json()['errors']
+            assert_that(error_message, has_properties(check_error))
 
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
         ('login_51', 'login_51@mail.ru', 'login_55', 201, ''),
@@ -195,6 +175,35 @@ class TestsPostV1Account:
             assert row['Activated'] is True, f'User {login} is not activated'
     
         api.login.login_user(login=login, password=password)
+        
+        dataset = dm_orm.get_user_by_login(login=login)
+            row: User
+            for row in dataset:
+                assert_that(row, has_properties(
+                    {
+                        'Login': login,
+                        'Activated': False
+                    }
+                ))
+            dm_orm.update_user_activated(login=login)
+            dataset = dm_orm.get_user_by_login(login=login)
+            for row in dataset:
+                assert row.Activated is True, f'User {login} is not activated'
+
+            time.sleep(2)
+
+            dm_api_facade.account.activate_registered_user(login=login)
+            for row in dataset:
+                assert row.Activated is True, f'User {login} is activated yet'
+
+            dataset = dm_orm.get_user_by_login(login=login)
+            time.sleep(2)
+
+            for row in dataset:
+                assert row.Activated is True, f'User {login} is not activated'
+
+            dm_api_facade.login.login_user(login=login, password=password)
+        
         '''
 
         # token = api.login.get_auth_token(login='login27', password='login_55')
