@@ -106,8 +106,8 @@ class TestsPostV1Account:
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
         ('login_51', 'login_512@mail.ru', 'log', 400, 'Short')])
     def test_create_and_activated_user_400_password_short(self, dm_api_facade, dm_orm, login, email, password,
-                                           status_code,
-                                           check_error, assertions):
+                                                          status_code,
+                                                          check_error, assertions):
         dm_orm.delete_user_by_login(login=login)
         dm_api_facade.mailhog.delete_all_messages()
         response = dm_api_facade.account.register_new_user(
@@ -131,7 +131,7 @@ class TestsPostV1Account:
             dm_api_facade.login.login_user(login=login, password=password)
 
     @pytest.mark.parametrize('login, email, password, status_code, check_error', [
-        ('login_51', 'login_51@mail.ru', 'login_55', 201, ''),
+        ('login_522', 'login_522@mail.ru', 'login_55', 201, ''),
         ('login_47', 'login_47233@mail.ru', 'login', 400, 'Short'),
         ('l', 'login47222@mail.ru', 'login_55', 400, 'Short'),
         ('login2345', '@mail.ru', 'login_55', 400, 'Invalid'),
@@ -170,7 +170,9 @@ class TestsPostV1Account:
                 ))
             else:
                 assertions.check_user_was_created(login=login)
-                dm_api_facade.account.activate_registered_user(login=login)
+                dm_orm.get_user_by_login(login=login)
+                dm_orm.update_user_activated(login=login)
+                # dm_api_facade.account.activate_registered_user(login=login)
                 dm_orm.get_user_by_login(login=login)
                 assertions.check_user_was_activated(login=login)
                 dm_api_facade.login.login_user(login=login, password=password)

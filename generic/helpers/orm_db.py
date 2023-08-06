@@ -32,7 +32,7 @@ class OrmDatabase:
         return dataset
 
     def update_user_activated(self, login, is_activated: bool = True):
+        query = update(User).where(User.Login == login).values({User.Activated: is_activated})
         with allure.step("Активация пользователя через БД"):
-            query = update(User).where(User.Login == login).values({User.Activated: is_activated})
             dataset = self.db.send_bulk_query(query)
         return dataset
