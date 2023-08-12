@@ -15,6 +15,7 @@ class Login:
     def login_user(self, login: str, password: str, remember_me: bool = True):
         with allure.step("Авторизация пользователя"):
             response = self.facade.login_api.v1_account_login_post(
+                _return_http_data_only=False,
                 login_credentials=LoginCredentials(
                     login=login,
                     password=password,
