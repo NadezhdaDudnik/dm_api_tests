@@ -3,7 +3,6 @@ import time
 import allure
 import pytest
 from hamcrest import assert_that, has_entries, has_properties
-from generic.helpers.orm_models import User
 from collections import namedtuple
 from string import ascii_letters, digits
 import random
@@ -141,74 +140,3 @@ class TestsPostV1Account:
                 assertions.check_user_was_activated(login=login)
                 dm_api_facade.login.login_user(login=login, password=password)
 
-        '''db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
-        db.delete_user_by_login(login=login)
-        dataset = db.get_user_by_login(login=login)
-        assert len(dataset) == 0
-        api.mailhog.delete_all_messages()
-    
-        api.account.register_new_user(
-            login=login,
-            email=email,
-            password=password
-        )
-        dataset = db.get_user_by_login(login=login)
-        for row in dataset:
-            assert row['Login'] == login, f'User {login} is not registered'
-            assert row['Activated'] is False, f'User {login} is was activated'
-    
-        db.update_user_activated(login=login, is_activated=is_activated)
-        dataset = db.get_user_by_login(login=login)
-        for row in dataset:
-            assert row['Activated'] is True, f'User {login} is not activated'
-    
-        time.sleep(2)
-    
-        api.account.activate_registered_user(login=login)
-        for row in dataset:
-            assert row['Activated'] is True, f'User {login} is activated yet'
-    
-        dataset = db.get_user_by_login(login=login)
-        time.sleep(2)
-    
-        for row in dataset:
-            assert row['Activated'] is True, f'User {login} is not activated'
-    
-        api.login.login_user(login=login, password=password)
-        
-        dataset = dm_orm.get_user_by_login(login=login)
-            row: User
-            for row in dataset:
-                assert_that(row, has_properties(
-                    {
-                        'Login': login,
-                        'Activated': False
-                    }
-                ))
-            dm_orm.update_user_activated(login=login)
-            dataset = dm_orm.get_user_by_login(login=login)
-            for row in dataset:
-                assert row.Activated is True, f'User {login} is not activated'
-
-            time.sleep(2)
-
-            dm_api_facade.account.activate_registered_user(login=login)
-            for row in dataset:
-                assert row.Activated is True, f'User {login} is activated yet'
-
-            dataset = dm_orm.get_user_by_login(login=login)
-            time.sleep(2)
-
-            for row in dataset:
-                assert row.Activated is True, f'User {login} is not activated'
-
-            dm_api_facade.login.login_user(login=login, password=password)
-        
-        '''
-
-        # token = api.login.get_auth_token(login='login27', password='login_55')
-        # api.account.set_headers(headers=token)
-        # api.login.set_headers(headers=token)
-        # api.login_api.delete_v1_account_login()
-        # api.account.get_current_user_info()
-        # api.login.logout_user_from_all_devices()
