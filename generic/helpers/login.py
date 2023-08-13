@@ -9,8 +9,9 @@ except ImportError:
 
 
 class Login:
-    def __init__(self, facade: Facade):
-        self.facade = facade
+    def __init__(self, facade):
+        from services.dm_api_account import Facade
+        self.facade: Facade = facade
 
     def set_headers(self, headers):
         self.facade.login_api.client.session.headers.update(headers)

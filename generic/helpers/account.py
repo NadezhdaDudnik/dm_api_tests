@@ -2,14 +2,12 @@ from apis.dm_api_account.models import Registration
 from apis.dm_api_account.models import ResetPassword
 from apis.dm_api_account.models import ChangeEmail
 from apis.dm_api_account.models import ChangePassword
-try:
-    from services.dm_api_account import Facade
-except ImportError:
-    ...
+
 
 class Account:
-    def __init__(self, facade: Facade):
-        self.facade = facade
+    def __init__(self, facade):
+        from services.dm_api_account import Facade
+        self.facade: Facade = facade
 
     def set_headers(self, headers):
         self.facade.account_api.client.session.headers.update(headers)

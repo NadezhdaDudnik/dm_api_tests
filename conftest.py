@@ -6,6 +6,7 @@ from generic.assertions.post_v1_account import AssertionsPostV1Account
 from generic.helpers.mailhog import MailhogApi
 from generic.helpers.orm_db import OrmDatabase
 from generic.helpers.dm_db import DmDatabase
+from generic.helpers.search import Search
 from services.dm_api_account import Facade
 import structlog
 
@@ -53,11 +54,18 @@ def dm_db():
 @pytest.fixture
 def dm_orm():
     orm = OrmDatabase(user=v.get('database.dm3_5.user'),
-                              password=v.get('database.dm3_5.password'),
-                              host=v.get('database.dm3_5.host'),
-                              database=v.get('database.dm3_5.database'))
+                      password=v.get('database.dm3_5.password'),
+                      host=v.get('database.dm3_5.host'),
+                      database=v.get('database.dm3_5.database'))
     yield orm
     orm.db.close_connection()
+
+
+@pytest.fixture
+def grpc_search():
+    client = Search(target='localhost:5052')
+    yield client
+    client.close()
 
 
 @pytest.fixture()
