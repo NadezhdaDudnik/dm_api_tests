@@ -12,14 +12,13 @@ class Account:
     def set_headers(self, headers):
         self.facade.account_api.client.session.headers.update(headers)
 
-    def register_new_user(self, login: str, email: str, password: str, status_code: int):
+    def register_new_user(self, login: str, email: str, password: str):
         response = self.facade.account_api.register(
             registration=Registration(
                 login=login,
                 email=email,
                 password=password
-            ),
-            status_code=status_code
+            )
         )
         return response
 

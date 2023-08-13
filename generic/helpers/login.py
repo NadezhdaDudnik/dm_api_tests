@@ -3,7 +3,6 @@ import allure
 from dm_api_account.models import LoginCredentials
 
 
-
 class Login:
     def __init__(self, facade):
         from services.dm_api_account import Facade
