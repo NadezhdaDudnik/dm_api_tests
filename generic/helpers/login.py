@@ -1,6 +1,6 @@
 import allure
 
-from apis.dm_api_account.models import LoginCredentials
+from apis.dm_api_account.models.login_credentials_model import LoginCredentials
 
 try:
     from services.dm_api_account import Facade

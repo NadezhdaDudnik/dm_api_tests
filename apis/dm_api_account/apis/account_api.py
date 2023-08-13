@@ -1,10 +1,9 @@
 import allure
 from requests import Response
 from common_libs.restclient.restclient import Restclient
-from ..models import *
+from model import Registration, BadRequestError, ResetPassword, UserEnvelope, ChangeEmail, ChangePassword, \
+    UserDetailsEnvelope
 from ..utilities import validate_request_json, validate_status_code
-from apis.dm_api_account.models import *
-
 
 
 class AccountApi:
