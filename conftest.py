@@ -2,12 +2,10 @@ import pytest
 from vyper import v
 from pathlib import Path
 
-from apis.dm_api_search_async import SearchEngineStub
 from generic.assertions.post_v1_account import AssertionsPostV1Account
 from generic.helpers.mailhog import MailhogApi
 from generic.helpers.orm_db import OrmDatabase
 from generic.helpers.dm_db import DmDatabase
-from generic.helpers.search import Search
 from services.dm_api_account import Facade
 import structlog
 from grpclib.client import Channel
@@ -61,21 +59,6 @@ def dm_orm():
                       database=v.get('database.dm3_5.database'))
     yield orm
     orm.db.close_connection()
-
-
-@pytest.fixture
-def grpc_search():
-    client = Search(target='localhost:5052')
-    yield client
-    client.close()
-
-
-@pytest.fixture
-def grpc_search_async():
-    channel = Channel(host='localhost', port=5052)
-    client = SearchEngineStub(channel)
-    yield client
-    channel.close()
 
 
 @pytest.fixture()
