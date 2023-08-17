@@ -79,11 +79,11 @@ docker run -it --rm dm_api_tests
  └── README.md                   # Файл с описанием репозитория для тестов
 ```
 ### В файле config настраиваются окружения и выносятся основные подключения.
-![This is an image](images/screenshots/config.png)
-
-
 
 ### <img width="3%" title="Allure Report" src="images/logo_stacks/allure_report.png"> Allure report
+allure generate -c ./allure-results -o ./allure-report
+allure serve
+
 ##### После прохождения тестов, результаты можно посмотреть в генерируемом Allure отчете.
 ![This is an image](images/screenshots/allure-report.png)
 
